@@ -12,7 +12,7 @@ rebuild: clean all
 
 run: $(EXEC)
 		@echo "Running ..."
-		./$(EXEC)
+		./$(EXEC) test.txt
 
 clean: 
 		rm -f $(EXEC)

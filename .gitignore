@@ -4,4 +4,5 @@
 .o
 .ob
 .exe
+.dSYM
 node_modules/
