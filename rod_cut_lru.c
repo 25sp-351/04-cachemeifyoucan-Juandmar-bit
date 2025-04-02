@@ -41,15 +41,15 @@ int main(int argc, char *argv[]) {
         }
 
         ListOutput *result = max_profit(rod_length, list, size);
-        int return_value = 0;
+        int return_remainder = 0;
     
         for (int xx = 0; xx < size; xx++) {
             if(result->count[xx] > 0){
                 printf("%d @ %d = %d \n", result->count[xx], list[xx].length, list[xx].value * result->count[xx]);
-                return_value += list[xx].length * result->count[xx];
+                return_remainder += list[xx].length * result->count[xx];
             }
         }
-        int remainer = rod_length - return_value;
+        int remainer = rod_length - return_remainder;
         printf("Value: %d\n", result->max_value);
         printf("Remaining: %d\n", remainer);
     }

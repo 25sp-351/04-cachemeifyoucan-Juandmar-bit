@@ -5,7 +5,6 @@
 
 LRU cache[MAX_CACHE]; // Array to store the LFU pages
 
-// return the maximum of two integers
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
@@ -28,7 +27,6 @@ ListOutput* storage_list(int n, int profit) {
 }
 
 ListOutput* max_profit(int L, List pieces[], int n) {
-
     LRU *cached = get_cache(L);
     if (cached != NULL) {
         ListOutput *copy = storage_list(n, cached->max_value);
@@ -54,8 +52,9 @@ ListOutput* max_profit(int L, List pieces[], int n) {
                 free(best);
 
                 best = storage_list(n, current_profit);
-                for (int yy = 0; yy < n; yy++)
+                for (int yy = 0; yy < n; yy++){
                     best->count[yy] = temp->count[yy];
+                }
                 best->count[xx]++;
             }
 

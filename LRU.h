@@ -1,8 +1,6 @@
 #ifndef LRU_H
 #define LRU_H
 
-#define MAX_VAL 2
-
 #define MAX_CACHE 100
 #define MAX_PIECES 10
 

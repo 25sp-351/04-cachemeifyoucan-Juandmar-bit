@@ -28,7 +28,6 @@ ListOutput* storage_list(int n, int profit) {
 }
 
 ListOutput* max_profit(int L, List pieces[], int n) {
-
     LFU *cached = get_cache(L);
     if (cached != NULL) {
         ListOutput *copy = storage_list(n, cached->max_value);

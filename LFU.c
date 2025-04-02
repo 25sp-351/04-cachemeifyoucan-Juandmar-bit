@@ -9,8 +9,9 @@ int find_min_index() {
     // Replace least frequently used
     int min_index = 0;
     for (int xx = 1; xx < cache_size; xx++) {
-        if (cache[xx].frequency < cache[min_index].frequency)
+        if (cache[xx].frequency < cache[min_index].frequency){
             min_index = xx;
+        }
     }
     return min_index;
 }
