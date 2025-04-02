@@ -16,6 +16,5 @@ typedef struct {
 int max(int a, int b);
 ListOutput* storage_list(int n, int profit);
 ListOutput* max_profit(int L, List pieces[], int n);
-void display_cache(ListOutput *list, int n);
 
 #endif

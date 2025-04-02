@@ -1,118 +1,65 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "LRU.h"
 
-#define SIZE 3  // Memory capacity
-int pages[SIZE];  // Memory to store pages
+LRU cache[MAX_CACHE]; // Array to store the LFU pages
+int cache_size = 0; // Number of elements in the cache
+int access_counter = 0;
 
-CacheLRU cache[SIZE];  // Cache to store pages
-int size = 0;
-int current_time = 0;
+void free_existing_entry(int index) {
+    for (int j = 0; j < MAX_PIECES; j++) {
+        if (cache[index].values[j].count != NULL) {
+            free(cache[index].values[j].count);
+            cache[index].values[j].count = NULL;
+        }
+    }
+}
 
-CacheLRU* find_entry(int key) {
-    for (int xx = 0; xx < size; xx++) {
+LRU* get_cache(int key) {
+    // Check if the item is in the cache
+    for (int xx = 0; xx < MAX_CACHE; xx++) {
         if (cache[xx].key == key) {
+            printf("[LRU] Cache HIT for rod length %d (last_used: %d)\n", key, cache[xx].last_accessed);
+            cache[xx].last_accessed = access_counter++;
             return &cache[xx];
         }
     }
-    return NULL;
-
+    printf("[LRU] Cache MISS for rod length %d\n", key);
+    return NULL;  
 }
 
-int find_LRU_index() {
-    int min_index = 0;
-    for (int xx = 1; xx < size; xx++) {
-        if (cache[xx].timestamp < cache[min_index].timestamp) {
-            min_index = xx;
+void put_in_cache(LRU entry, int n) {
+    entry.last_accessed = access_counter++;
+
+    // Check if already in cache
+    for (int i = 0; i < cache_size; i++) {
+        if (cache[i].key == entry.key) {
+            free_existing_entry(i);  // if needed
+            printf("[LRU] Updating existing cache entry for %d\n", entry.key);
+            free_existing_entry(i);
+            cache[i] = entry;
+            return;
         }
     }
-    return min_index;
-}
 
-void new_entry(int key, int length, int price) {
-    current_time++;
-    if (size != NULL) {
-        cache[size].key = key;
-        //cache[size].length = length;
-        //cache[size].price = price;
-        //cache[size].counter = 1;
-        cache[size].timestamp = current_time;
-        size++;
+    // If not full, add
+    if (cache_size < MAX_CACHE) {
+        printf("[LRU] Inserting new entry for %d\n", entry.key);
+        cache[cache_size++] = entry;
+        return;
     }
-    else {
-        int min_index = find_LRU_index();
-        cache[min_index].key = key;
-        //cache[min_index].length = length;
-        //cache[min_index].price = price;
-        //cache[min_index].counter = 1;
-        cache[min_index].timestamp = current_time;
-    }
-}
 
-int is_in_memory(int ref_page) {
-    for (int xx = 0; xx < SIZE; xx++) {
-        if (pages[xx] == ref_page) {
-            return xx; 
+    // Find least recently used
+    int lru_index = 0;
+    for (int i = 1; i < cache_size; i++) {
+        if (cache[i].last_accessed < cache[lru_index].last_accessed) {
+            lru_index = i;
         }
     }
-    return -1; 
+    printf("[LRU] Cache FULL: Replacing LRU entry (key: %d, last_used: %d) with new key %d\n",
+           cache[lru_index].key, cache[lru_index].last_accessed, entry.key);
+
+
+    free_existing_entry(lru_index);  // if needed
+    cache[lru_index] = entry;
 }
-
-void fill_memory() {
-    for (int xx = 0; xx < SIZE; xx++) {
-        pages[xx] = 0;
-    }
-}
-
-void print_pages() {
-    printf("Pages: ");
-    for (int j = 0; j < SIZE; j++) {
-        if (pages[j] != -1) 
-            printf("%d ", pages[j]);
-        else
-            printf("- ");
-    }
-    printf("\n");
-}
-
-void hit(int page_index) {
-    // Page hit: Move the found page to the end (most recently used)
-    int temp = pages[page_index];
-    for (int yy = page_index; yy < SIZE - 1; yy++) {
-        pages[yy] = pages[yy + 1];
-    }
-    pages[SIZE - 1] = temp;
-}
-
-void fault (int ref_page) {
-    // Page fault: If memory is full, remove the least recently used page
-    for (int yy = 0; yy < SIZE - 1; yy++) {
-        pages[yy] = pages[yy + 1];
-    }
-    pages[SIZE - 1] = ref_page;
-}
-
-void lru(int array[], int size) {
-    int faults = 0, hits = 0;
-    fill_memory();
-
-    // Iterate over the reference string
-    for (int xx = 0; xx < size; xx++) {
-        int ref_page = array[xx];
-        int page_index = is_in_memory(ref_page);
-
-        if (page_index != -1) {  
-            hit(page_index);
-            hits++;
-        } 
-        else { 
-            faults++;
-            fault (ref_page);
-        }
-        print_pages();
-    }
-
-    printf("Page Faults: %d\n", faults);
-    printf("Page Hits: %d\n", hits);
-}
-
-

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "LFU.h"
-#include "computation.h"
+#include "LRU.h"
+#include "computation_lru.h"
 #define LIMIT_VALUES 10
 
 int main(int argc, char *argv[]) {
@@ -39,15 +39,19 @@ int main(int argc, char *argv[]) {
         if (rod_length == -1) {
             break;
         }
-       
+
         ListOutput *result = max_profit(rod_length, list, size);
+        int return_value = 0;
     
-        for (int i = 0; i < size; i++) {
-            if(result->count[i] > 0){
-                printf("%d @ %d = %d \n", result->count[i], list[i].length, list[i].value * result->count[i]);
+        for (int xx = 0; xx < size; xx++) {
+            if(result->count[xx] > 0){
+                printf("%d @ %d = %d \n", result->count[xx], list[xx].length, list[xx].value * result->count[xx]);
+                return_value += list[xx].length * result->count[xx];
             }
         }
+        int remainer = rod_length - return_value;
         printf("Value: %d\n", result->max_value);
+        printf("Remaining: %d\n", remainer);
     }
     fclose(file);
     return 0;

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LFU.h"
-#include "computation.h"
+#include "computation_lfu.h"
 
 LFU cache[MAX_CACHE]; // Array to store the LFU pages
 
@@ -39,11 +39,10 @@ ListOutput* max_profit(int L, List pieces[], int n) {
         return copy;
     }
 
-    // 2. Base case
-    if (L == 0)
+    if (L == 0){
         return storage_list(n, 0);
+    }
 
-    // 3. Recursive computation
     ListOutput *best = storage_list(n, 0);
     for (int xx = 0; xx < n; xx++) {
         if (pieces[xx].length <= L) {
